@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Factorial Calculator</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --purple: #8A2BE2;
+            --pink: #FF69B4;
+            --teal: #20B2AA;
+            --orange: #FFA500;
+            --blue: #1E90FF;
+            --dark: #2F4F4F;
+            --light: #F5F5F5;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, var(--purple), var(--teal));
+            color: white;
+            min-height: 100vh;
+            padding: 2rem;
+        }
+
+        .calculator-container {
+            max-width: 600px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 2rem;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 2rem;
+            background: linear-gradient(to right, var(--pink), var(--orange));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            font-weight: 700;
+        }
+
+        .input-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .input-group-text {
+            background: linear-gradient(to right, var(--blue), var(--teal));
+            color: white;
+            border: none;
+        }
+
+        .form-control {
+            background: rgba(255, 255, 255, 0.1);
+            border: none;
+            color: white;
+            height: 50px;
+        }
+
+        .form-control:focus {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            box-shadow: 0 0 0 0.25rem rgba(138, 43, 226, 0.25);
+        }
+
+        .btn-calculate {
+            background: linear-gradient(45deg, var(--pink), var(--orange));
+            border: none;
+            font-weight: 600;
+            width: 100%;
+            padding: 12px;
+            margin-top: 1rem;
+            transition: all 0.3s;
+        }
+
+        .btn-calculate:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(255, 105, 180, 0.4);
+        }
+
+        .method-selector {
+            background: rgba(0, 0, 0, 0.1);
+            padding: 1rem;
+            border-radius: 10px;
+            margin-bottom: 1rem;
+        }
+
+        .form-check-input:checked {
+            background-color: var(--pink);
+            border-color: var(--pink);
+        }
+
+        .form-check-label {
+            margin-left: 0.5rem;
+        }
+
+        .result-container {
+            background: rgba(32, 178, 170, 0.2);
+            border-radius: 15px;
+            padding: 1.5rem;
+            margin-top: 1.5rem;
+            display: none;
+            border: 1px solid rgba(32, 178, 170, 0.3);
+        }
+
+        .result-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 1rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px dashed rgba(255, 255, 255, 0.2);
+        }
+
+        .result-item:last-child {
+            border-bottom: none;
+        }
+
+        .result-label {
+            font-weight: 600;
+            color: var(--orange);
+        }
+
+        .result-value {
+            font-weight: 700;
+        }
+
+        .info-section {
+            background: rgba(30, 144, 255, 0.15);
+            border-radius: 15px;
+            padding: 1.5rem;
+            margin-top: 2rem;
+            border: 1px solid rgba(30, 144, 255, 0.2);
+        }
+
+        .info-section h2 {
+            color: var(--pink);
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .formula-box {
+            background: rgba(0, 0, 0, 0.1);
+            border-left: 3px solid var(--orange);
+            padding: 1rem;
+            margin: 1rem 0;
+            border-radius: 0 5px 5px 0;
+        }
+
+        .invalid-feedback {
+            color: #FF6B6B;
+            font-weight: 600;
+        }
+
+        @media (max-width: 576px) {
+            body {
+                padding: 1rem;
+            }
+            .calculator-container {
+                padding: 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="calculator-container">
+        <h1><i class="fas fa-calculator"></i> Factorial Calculator</h1>
+        
+        <form id="factorialForm">
+            <div class="input-group">
+                <span class="input-group-text"><i class="fas fa-hashtag"></i></span>
+                <input type="number" class="form-control" id="numberInput" min="0" placeholder="Enter a positive integer" required>
+            </div>
+            <div id="inputError" class="invalid-feedback"></div>
+            
+            <div class="method-selector">
+                <div class="form-check">
+                    <input class="form-check-input" type="radio" name="method" id="iterativeMethod" value="iterative" checked>
+                    <label class="form-check-label" for="iterativeMethod">
+                        <i class="fas fa-redo-alt"></i> Iterative Method
+                    </label>
+                </div>
+                <div class="form-check">
+                    <input class="form-check-input" type="radio" name="method" id="recursiveMethod" value="recursive">
+                    <label class="form-check-label" for="recursiveMethod">
+                        <i class="fas fa-infinity"></i> Recursive Method
+                    </label>
+                </div>
+            </div>
+            
+            <button type="submit" class="btn btn-calculate">
+                <i class="fas fa-bolt"></i> Calculate Factorial
+            </button>
+        </form>
+        
+        <div id="resultContainer" class="result-container">
+            <div class="result-item">
+                <span class="result-label">Input Number:</span>
+                <span id="inputNumber" class="result-value"></span>
+            </div>
+            <div class="result-item">
+                <span class="result-label">Factorial Result:</span>
+                <span id="resultValue" class="result-value"></span>
+            </div>
+            <div class="result-item">
+                <span class="result-label">Calculation Method:</span>
+                <span id="calculationMethod" class="result-value"></span>
+            </div>
+            <div class="result-item">
+                <span class="result-label">Time Taken:</span>
+                <span id="timeTaken" class="result-value"></span>
+            </div>
+        </div>
+        
+        <div class="info-section">
+            <h2><i class="fas fa-info-circle"></i> About Factorials</h2>
+            <p>The factorial of a non-negative integer n is the product of all positive integers less than or equal to n.</p>
+            <div class="formula-box">
+                n! = n × (n-1) × (n-2) × ... × 2 × 1
+            </div>
+            <p><strong>Example:</strong> 5! = 5 × 4 × 3 × 2 × 1 = 120</p>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const form = document.getElementById('factorialForm');
+            const numberInput = document.getElementById('numberInput');
+            const inputError = document.getElementById('inputError');
+            const resultContainer = document.getElementById('resultContainer');
+            
+            form.addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                // Reset validation
+                numberInput.classList.remove('is-invalid');
+                inputError.textContent = '';
+                resultContainer.style.display = 'none';
+                
+                // Get input value
+                const inputValue = parseInt(numberInput.value);
+                
+                // Validate input
+                if (isNaN(inputValue)) {
+                    showError('Please enter a valid number');
+                    return;
+                }
+                
+                if (inputValue < 0) {
+                    showError('Factorial is not defined for negative numbers');
+                    return;
+                }
+                
+                if (inputValue > 170) {
+                    showError('Please enter a number ≤ 170 (JavaScript number limit)');
+                    return;
+                }
+                
+                // Get calculation method
+                const method = document.querySelector('input[name="method"]:checked').value;
+                
+                // Calculate factorial
+                let result, startTime, endTime;
+                
+                startTime = performance.now();
+                if (method === 'iterative') {
+                    result = iterativeFactorial(inputValue);
+                } else {
+                    result = recursiveFactorial(inputValue);
+                }
+                endTime = performance.now();
+                
+                // Display results
+                document.getElementById('inputNumber').textContent = inputValue;
+                document.getElementById('resultValue').textContent = result.toLocaleString();
+                document.getElementById('calculationMethod').textContent = method === 'iterative' ? 'Iterative' : 'Recursive';
+                document.getElementById('timeTaken').textContent = (endTime - startTime).toFixed(4) + ' ms';
+                
+                resultContainer.style.display = 'block';
+            });
+            
+            function showError(message) {
+                numberInput.classList.add('is-invalid');
+                inputError.textContent = message;
+            }
+            
+            // Iterative factorial function
+            function iterativeFactorial(n) {
+                if (n === 0 || n === 1) return 1;
+                let result = 1;
+                for (let i = 2; i <= n; i++) {
+                    result *= i;
+                }
+                return result;
+            }
+            
+            // Recursive factorial function
+            function recursiveFactorial(n) {
+                if (n === 0 || n === 1) return 1;
+                return n * recursiveFactorial(n - 1);
+            }
+            
+            // Clear result when input changes
+            numberInput.addEventListener('input', function() {
+                resultContainer.style.display = 'none';
+            });
+        });
+    </script>
+</body>
+</html>
